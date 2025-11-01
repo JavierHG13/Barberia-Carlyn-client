@@ -1,12 +1,11 @@
 import { Component, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Navbar } from '../../shared/components/navbar/navbar';
 
 @Component({
   selector: 'app-servicios',
   standalone: true,
-  imports: [CommonModule, Navbar],
+  imports: [CommonModule],
   templateUrl: './servicios.html',
   styleUrls: ['./servicios.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

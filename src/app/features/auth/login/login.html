@@ -4,7 +4,13 @@
       <h2>Iniciar sesión</h2>
     </div>
 
-    <form (ngSubmit)="onLogin()" class="login-form">
+    <!-- Mensaje de error -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      {{ errorMessage }}
+    </div>
+
+    <form (ngSubmit)="onLogin()" class="login-form" #loginForm="ngForm">
       <div class="form-group">
         <label for="email">Correo Electrónico</label>
         <div class="input-with-icon">
@@ -15,6 +21,7 @@
             [(ngModel)]="email" 
             name="email" 
             placeholder="ejemplo@correo.com"
+            [disabled]="isLoading"
             required>
         </div>
       </div>
@@ -29,13 +36,24 @@
             [(ngModel)]="password" 
             name="password" 
             placeholder="••••••••"
+            [disabled]="isLoading"
             required>
         </div>
       </div>
 
-      <button type="submit" class="btn-primary btn-full">
-        <ion-icon name="log-in-outline"></ion-icon>
-        Iniciar Sesión
+      <div class="forgot-password">
+        <span (click)="goToForgotPassword()" class="link-accent">
+          ¿Olvidaste tu contraseña?
+        </span>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-primary btn-full"
+        [disabled]="isLoading || !loginForm.form.valid">
+        <ion-icon *ngIf="!isLoading" name="log-in-outline"></ion-icon>
+        <ion-icon *ngIf="isLoading" name="hourglass-outline" class="spinner"></ion-icon>
+        {{ isLoading ? 'Iniciando...' : 'Iniciar Sesión' }}
       </button>
     </form>
 
