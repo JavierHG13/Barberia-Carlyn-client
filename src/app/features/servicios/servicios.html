@@ -1,0 +1,107 @@
+<div class="servicios-wrapper">
+  <!-- Header -->
+  <!-- Categorías -->
+  <section class="categorias-section">
+    <div class="container">
+      <div class="categorias-tabs">
+        <button 
+          *ngFor="let cat of categorias"
+          [class.active]="categoriaActiva === cat.id"
+          (click)="cambiarCategoria(cat.id)"
+          class="categoria-tab">
+          <ion-icon [name]="cat.icono"></ion-icon>
+          <span>{{ cat.nombre }}</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Grid de Servicios -->
+  <section class="servicios-grid-section">
+    <div class="container">
+      <div class="servicios-grid">
+        <div 
+          *ngFor="let servicio of serviciosFiltrados" 
+          class="servicio-card"
+          [class.popular]="servicio.popular">
+          
+          <div class="servicio-badge" *ngIf="servicio.popular">
+            <ion-icon name="star"></ion-icon>
+            Popular
+          </div>
+
+          <div class="servicio-icon-large">
+            <ion-icon [name]="servicio.icono"></ion-icon>
+          </div>
+
+          <h3>{{ servicio.nombre }}</h3>
+          <p class="servicio-descripcion">{{ servicio.descripcion }}</p>
+
+          <div class="servicio-detalles">
+            <div class="detalle-item">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ servicio.duracion }}</span>
+            </div>
+            <div class="detalle-item precio-detalle">
+              <ion-icon name="cash-outline"></ion-icon>
+              <span class="precio-valor">${{ servicio.precio }}</span>
+            </div>
+          </div>
+
+          <button class="btn-agendar" (click)="agendarServicio(servicio)">
+            <ion-icon name="calendar-outline"></ion-icon>
+            Agendar Ahora
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Información Adicional -->
+  <section class="info-adicional-section">
+    <div class="container">
+      <div class="info-grid">
+        <div class="info-card">
+          <ion-icon name="shield-checkmark-outline" class="info-icon"></ion-icon>
+          <h3>Calidad Garantizada</h3>
+          <p>Utilizamos solo productos premium de las mejores marcas del mercado</p>
+        </div>
+
+        <div class="info-card">
+          <ion-icon name="people-outline" class="info-icon"></ion-icon>
+          <h3>Barberos Expertos</h3>
+          <p>Nuestro equipo cuenta con años de experiencia y capacitación constante</p>
+        </div>
+
+        <div class="info-card">
+          <ion-icon name="time-outline" class="info-icon"></ion-icon>
+          <h3>Puntualidad</h3>
+          <p>Respetamos tu tiempo. Servicio puntual sin largas esperas</p>
+        </div>
+
+        <div class="info-card">
+          <ion-icon name="sparkles-outline" class="info-icon"></ion-icon>
+          <h3>Ambiente Exclusivo</h3>
+          <p>Disfruta de una experiencia única en un espacio diseñado para ti</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="servicios-cta">
+    <div class="container">
+      <div class="cta-box">
+        <ion-icon name="gift-outline" class="cta-icon"></ion-icon>
+        <div class="cta-text">
+          <h2>Primera Visita</h2>
+          <p>15% de descuento en tu primer servicio</p>
+        </div>
+        <button class="btn-cta" (click)="agendarServicio({nombre: 'Primera Cita'})">
+          Agendar mi Primera Cita
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

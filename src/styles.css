@@ -1,1 +1,117 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  /* Colores Primarios */
+  --gris-grafito: #36454F;
+  --blanco-hueso: #F5F5F5;
+  
+  /* Colores Secundarios */
+  --negro-suave: #1C1C1C;
+  --azul-acero: #34495E;
+  
+  /* Colores de Acento */
+  --dorado-clasico: #B8860B;
+  --verde-jade: #2ECC71;
+  --verde-menta: #A9DFBF;
+  --ambar: #F39C12;
+  
+  /* Estados del Sistema */
+  --verde-exito: #76FF03;
+  --rojo-critico: #E63946;
+  --amarillo-precaucion: #FFD60A;
+  --azul-informativo: #7CDAF9;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Lato', sans-serif;
+  background-color: var(--blanco-hueso);
+  color: var(--azul-acero);
+}
+
+h1, h2 {
+  font-family: 'Playfair Display', serif;
+  color: var(--negro-suave);
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+h3 {
+  font-family: 'Lato', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--azul-acero);
+}
+
+p {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--azul-acero);
+  line-height: 1.6;
+}
+
+button {
+  font-family: 'Lato', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--gris-grafito);
+  color: var(--blanco-hueso);
+}
+
+.btn-primary:hover {
+  background-color: var(--azul-acero);
+}
+
+.btn-accent {
+  background-color: var(--dorado-clasico);
+  color: var(--blanco-hueso);
+}
+
+.btn-accent:hover {
+  background-color: #9a7109;
+}
+
+input, select, textarea {
+  font-family: 'Lato', sans-serif;
+  font-size: 16px;
+  padding: 12px;
+  border: 1px solid var(--azul-acero);
+  border-radius: 4px;
+  background-color: white;
+  color: var(--negro-suave);
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--dorado-clasico);
+}
+
+label {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--azul-acero);
+  margin-bottom: 6px;
+  display: block;
+}

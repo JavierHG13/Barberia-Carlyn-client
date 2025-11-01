@@ -1,0 +1,115 @@
+<div class="home-wrapper">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1>Barbería Carlyn</h1>
+      <p class="hero-subtitle">Tradición, Elegancia y Estilo</p>
+      <p class="hero-description">
+        Más que un corte de cabello, una experiencia de caballero
+      </p>
+      <div class="hero-buttons">
+        <button class="btn-primary-large" (click)="agendarCita()">
+          <ion-icon name="calendar-outline"></ion-icon>
+          Agendar Cita
+        </button>
+        <button class="btn-secondary-large" (click)="verServicios()">
+          <ion-icon name="cut-outline"></ion-icon>
+          Ver Servicios
+        </button>
+      </div>
+    </div>
+    <div class="scroll-indicator">
+      <ion-icon name="chevron-down-outline"></ion-icon>
+    </div>
+  </section>
+
+  <!-- Características -->
+  <section class="features-section">
+    <div class="container">
+      <div class="section-intro">
+        <h2>¿Por qué elegirnos?</h2>
+        <p>Experiencia, calidad y atención personalizada en cada servicio</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card" *ngFor="let item of caracteristicas">
+          <div class="feature-icon">
+            <ion-icon [name]="item.icono"></ion-icon>
+          </div>
+          <h3>{{ item.titulo }}</h3>
+          <p>{{ item.descripcion }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Servicios Destacados -->
+  <section class="services-preview-section">
+    <div class="container">
+      <div class="section-intro">
+        <h2>Nuestros Servicios</h2>
+        <p>Servicios especializados para el caballero moderno</p>
+      </div>
+
+      <div class="services-preview-grid">
+        <div class="service-preview-card" *ngFor="let servicio of serviciosDestacados">
+          <div class="service-preview-icon">
+            <ion-icon [name]="servicio.icono"></ion-icon>
+          </div>
+          <h3>{{ servicio.nombre }}</h3>
+          <p>{{ servicio.descripcion }}</p>
+          <div class="service-price">{{ servicio.precio }}</div>
+          <button class="btn-service" (click)="agendarCita()">Reservar</button>
+        </div>
+      </div>
+
+      <div class="services-cta">
+        <button class="btn-outline" (click)="verServicios()">
+          Ver Todos los Servicios
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonios -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-intro">
+        <h2>Lo que dicen nuestros clientes</h2>
+        <p>La satisfacción de nuestros clientes es nuestra mayor recompensa</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card" *ngFor="let testimonio of testimonios">
+          <div class="testimonial-stars">
+            <ion-icon *ngFor="let star of [1,2,3,4,5]" name="star"></ion-icon>
+          </div>
+          <p class="testimonial-text">"{{ testimonio.comentario }}"</p>
+          <div class="testimonial-author">
+            <ion-icon name="person-circle-outline"></ion-icon>
+            <span>{{ testimonio.nombre }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Final -->
+  <section class="final-cta-section">
+    <div class="container">
+      <div class="final-cta-content">
+        <ion-icon name="calendar-outline" class="cta-icon-large"></ion-icon>
+        <h2>¿Listo para tu próximo corte?</h2>
+        <p>Agenda tu cita ahora y disfruta de la experiencia Carlyn</p>
+        <button class="btn-accent-large" (click)="agendarCita()">
+          Agendar mi Cita
+          <ion-icon name="arrow-forward-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  
+</div>
