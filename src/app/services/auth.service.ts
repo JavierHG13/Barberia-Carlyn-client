@@ -24,17 +24,14 @@ export interface RegisterData {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(
-    private http: HttpClient,
-    private router: Router
-  ) {
+  constructor(private http: HttpClient, private router: Router) {
     // Cargar usuario del localStorage al iniciar
     this.loadUserFromStorage();
   }
@@ -42,7 +39,7 @@ export class AuthService {
   private loadUserFromStorage(): void {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
-    
+
     if (token && user) {
       this.currentUserSubject.next(JSON.parse(user));
     }
@@ -50,14 +47,16 @@ export class AuthService {
 
   // LOGIN
   login(correoElectronico: string, contrasena: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, {
-      correoElectronico,
-      contrasena
-    }).pipe(
-      tap(response => {
-        this.saveAuthData(response.token, response.user);
-      })  
-    );
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/login`, {
+        correoElectronico,
+        contrasena,
+      })
+      .pipe(
+        tap((response) => {
+          this.saveAuthData(response.token, response.user);
+        })
+      );
   }
 
   // REGISTRO
@@ -67,65 +66,101 @@ export class AuthService {
 
   // VERIFICAR EMAIL
   verifyEmail(code: string): Observable<{ message: string; user?: User }> {
-    return this.http.post<{ message: string; user?: User }>(
-      `${this.apiUrl}/verify-email`, 
-      { code }
-    );
+    const correoElectronico = localStorage.getItem('pendingEmail');
+    if (!correoElectronico) {
+      throw new Error('No hay email pendiente de verificación');
+    }
+
+    return this.http.post<{ message: string; user?: User }>(`${this.apiUrl}/verify-email`, {
+      correoElectronico,
+      code,
+    });
   }
 
   // REENVIAR CÓDIGO DE VERIFICACIÓN
   resendCode(): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(`${this.apiUrl}/resend-code`, {});
+    const correoElectronico = localStorage.getItem('pendingEmail');
+    if (!correoElectronico) {
+      throw new Error('No hay email pendiente de verificación');
+    }
+
+    return this.http.post<{ message: string }>(`${this.apiUrl}/resend-code`, {
+      correoElectronico,
+    });
   }
 
   // LOGIN CON GOOGLE
   googleAuth(googleToken: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/google`, {
-      googleToken
-    }).pipe(
-      tap(response => {
-        this.saveAuthData(response.token, response.user);
+    return this.http
+      .post<AuthResponse>(`${this.apiUrl}/google`, {
+        googleToken,
       })
-    );
+      .pipe(
+        tap((response) => {
+          this.saveAuthData(response.token, response.user);
+        })
+      );
   }
 
   // OLVIDÉ MI CONTRASEÑA
   forgotPassword(correoElectronico: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.apiUrl}/forgot-password`,
-      { correoElectronico }
-    );
+    // Guardar email para usar en los siguientes pasos
+    localStorage.setItem('recoveryEmail', correoElectronico);
+
+    return this.http.post<{ message: string }>(`${this.apiUrl}/forgot-password`, {
+      correoElectronico,
+    });
   }
 
   // VERIFICAR CÓDIGO DE RECUPERACIÓN
   verifyRecoveryCode(code: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.apiUrl}/verify-recovery-code`,
-      { code }
-    );
+    const correoElectronico = localStorage.getItem('recoveryEmail');
+    if (!correoElectronico) {
+      throw new Error('No hay solicitud de recuperación activa');
+    }
+
+    return this.http.post<{ message: string }>(`${this.apiUrl}/verify-recovery-code`, {
+      code,
+      correoElectronico,
+    });
   }
 
   // RESETEAR CONTRASEÑA
   resetPassword(newPassword: string): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.apiUrl}/reset-password`,
-      { newPassword }
-    );
+    const correoElectronico = localStorage.getItem('recoveryEmail');
+
+    if (!correoElectronico) {
+      throw new Error('No hay solicitud de recuperación activa');
+    }
+
+    return this.http
+      .post<{ message: string }>(`${this.apiUrl}/reset-password`, {
+        newPassword,
+        correoElectronico,
+      })
+      .pipe(
+        tap(() => {
+          // Limpiar email de recuperación después de resetear
+          localStorage.removeItem('recoveryEmail');
+        })
+      );
   }
 
   // REENVIAR CÓDIGO DE RECUPERACIÓN
   resendRecoveryCode(): Observable<{ message: string }> {
-    return this.http.post<{ message: string }>(
-      `${this.apiUrl}/resend-recovery-code`,
-      {}
-    );
+    const correoElectronico = localStorage.getItem('recoveryEmail');
+    if (!correoElectronico) {
+      throw new Error('No hay solicitud de recuperación activa');
+    }
+
+    return this.http.post<{ message: string }>(`${this.apiUrl}/resend-recovery-code`, {
+      correoElectronico,
+    });
   }
 
   // OBTENER PERFIL
   getProfile(): Observable<{ message: string; user: User }> {
-    return this.http.get<{ message: string; user: User }>(
-      `${this.apiUrl}/profile`
-    );
+    return this.http.get<{ message: string; user: User }>(`${this.apiUrl}/profile`);
   }
 
   // GUARDAR DATOS DE AUTENTICACIÓN
