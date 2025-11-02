@@ -1,0 +1,91 @@
+<div class="registro-container">
+  <div class="registro-card">
+    <div class="logo-section">
+      <h2>Crear cuenta</h2>
+      <p>Únete a nuestra plataforma</p>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Mensaje de éxito -->
+    <div *ngIf="successMessage" class="alert alert-success">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onRegister()" class="registro-form" #registroForm="ngForm">
+      <!-- Nombre -->
+      <div class="form-group">
+        <label for="nombreCompleto">Nombre Completo</label>
+        <div class="input-with-icon">
+          <ion-icon name="person-outline"></ion-icon>
+          <input type="text" id="nombreCompleto" [(ngModel)]="nombreCompleto" name="nombreCompleto"
+            placeholder="Juan Pérez" [disabled]="isLoading" required (ngModelChange)="validateNombre()" />
+        </div>
+        <p class="field-error" *ngIf="nombreError">{{ nombreError }}</p>
+      </div>
+
+      <!-- Correo -->
+      <div class="form-group">
+        <label for="correoElectronico">Correo Electrónico</label>
+        <div class="input-with-icon">
+          <ion-icon name="mail-outline"></ion-icon>
+          <input type="email" id="correoElectronico" [(ngModel)]="correoElectronico" name="correoElectronico"
+            placeholder="ejemplo@correo.com" [disabled]="isLoading" required (ngModelChange)="validateCorreo()" />
+        </div>
+        <p class="field-error" *ngIf="correoError">{{ correoError }}</p>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="form-group">
+        <label for="telefono">Teléfono</label>
+        <div class="input-with-icon">
+          <ion-icon name="call-outline"></ion-icon>
+          <input type="tel" id="telefono" [(ngModel)]="telefono" name="telefono" placeholder="5551234567"
+            [disabled]="isLoading" maxlength="20" required (ngModelChange)="validateTelefono()" />
+        </div>
+        <p class="field-error" *ngIf="telefonoError">{{ telefonoError }}</p>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label for="contrasena">Contraseña</label>
+        <div class="input-with-icon">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <input type="password" id="contrasena" [(ngModel)]="contrasena" name="contrasena" placeholder="••••••••"
+            [disabled]="isLoading" required (ngModelChange)="validateContrasena()" />
+        </div>
+        <p class="field-error" *ngIf="contrasenaError">{{ contrasenaError }}</p>
+      </div>
+
+      <!-- Confirmar Contraseña -->
+      <div class="form-group">
+        <label for="confirmarContrasena">Confirmar Contraseña</label>
+        <div class="input-with-icon">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          <input type="password" id="confirmarContrasena" [(ngModel)]="confirmarContrasena" name="confirmarContrasena"
+            placeholder="••••••••" [disabled]="isLoading" required (ngModelChange)="validateConfirmar()" />
+        </div>
+        <p class="field-error" *ngIf="confirmarError">{{ confirmarError }}</p>
+      </div>
+
+      <!-- Botón -->
+      <button type="submit" class="btn-primary btn-full" [disabled]="isLoading || !registroForm.form.valid">
+        <ion-icon *ngIf="!isLoading" name="person-add-outline"></ion-icon>
+        <ion-icon *ngIf="isLoading" name="hourglass-outline" class="spinner"></ion-icon>
+        {{ isLoading ? 'Registrando...' : 'Crear Cuenta' }}
+      </button>
+    </form>
+
+
+    <div class="login-link">
+      <p>¿Ya tienes cuenta?
+        <span (click)="goToLogin()" class="link-accent">Inicia sesión aquí</span>
+      </p>
+    </div>
+  </div>
+</div>

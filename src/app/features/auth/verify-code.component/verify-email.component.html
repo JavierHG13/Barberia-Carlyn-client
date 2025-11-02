@@ -1,0 +1,93 @@
+<div class="verify-container">
+  <div class="verify-card">
+    <!-- Icono principal -->
+    <div class="icon-section">
+      <div class="email-icon">
+        <ion-icon name="mail-open-outline"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Título y descripción -->
+    <div class="header-section">
+      <h2>Verifica tu correo</h2>
+      <p class="description">
+        Hemos enviado un código de verificación de 6 dígitos a:
+      </p>
+      <p class="email-highlight">{{ email }}</p>
+      <p class="info-text">
+        El código expira en 4 minutos
+      </p>
+    </div>
+
+    <!-- Mensajes -->
+    <div *ngIf="errorMessage" class="alert alert-error">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      {{ successMessage }}
+    </div>
+
+    <!-- Formulario de verificación -->
+    <form (ngSubmit)="onVerifyEmail()" class="verify-form">
+      <div class="form-group">
+        <label for="verificationCode">Código de Verificación</label>
+        <input 
+          type="text" 
+          id="verificationCode" 
+          [(ngModel)]="verificationCode"
+          (input)="onCodeInput($event)"
+          name="verificationCode" 
+          placeholder="000000"
+          maxlength="6"
+          [disabled]="isVerifying"
+          class="verification-input"
+          autocomplete="off"
+          required>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-primary btn-full"
+        [disabled]="isVerifying || verificationCode.length !== 6">
+        <ion-icon *ngIf="!isVerifying" name="checkmark-circle-outline"></ion-icon>
+        <ion-icon *ngIf="isVerifying" name="hourglass-outline" class="spinner"></ion-icon>
+        {{ isVerifying ? 'Verificando...' : 'Verificar Código' }}
+      </button>
+    </form>
+
+    <!-- Sección de reenviar código -->
+    <div class="resend-section">
+      <p>¿No recibiste el código?</p>
+      
+      <button 
+        type="button"
+        (click)="onResendCode()" 
+        class="btn-link"
+        [disabled]="!canResend || isResending">
+        <ion-icon *ngIf="!isResending" name="refresh-outline"></ion-icon>
+        <ion-icon *ngIf="isResending" name="hourglass-outline" class="spinner"></ion-icon>
+        <span *ngIf="canResend && !isResending">Reenviar código</span>
+        <span *ngIf="isResending">Reenviando...</span>
+        <span *ngIf="!canResend && !isResending">Reenviar en {{ resendTimer }}s</span>
+      </button>
+    </div>
+
+    <!-- Enlaces adicionales -->
+    <div class="links-section">
+      <p>
+        <span (click)="goToLogin()" class="link-secondary">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+          Volver al inicio de sesión
+        </span>
+      </p>
+      <p>
+        <span (click)="goToRegister()" class="link-secondary">
+          ¿Correo incorrecto? Registrarse de nuevo
+        </span>
+      </p>
+    </div>
+  </div>
+</div>
