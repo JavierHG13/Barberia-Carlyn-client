@@ -23,6 +23,15 @@ export class Register {
   errorMessage: string = '';
   successMessage: string = '';
 
+  // Visibilidad de contraseñas
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
+  // Indicadores de fortaleza
+  hasMinLength: boolean = false;
+  hasUpperCase: boolean = false;
+  hasSpecialChar: boolean = false;
+
   // Mensajes individuales
   nombreError = '';
   correoError = '';
@@ -35,6 +44,15 @@ export class Register {
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {}
+
+  // 👁️ Toggle visibilidad de contraseña
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
 
   // 🧠 Validaciones en tiempo real
   validateNombre() {
@@ -56,8 +74,26 @@ export class Register {
   }
 
   validateContrasena() {
-    this.contrasenaError =
-      this.contrasena.length < 6 ? 'La contraseña debe tener al menos 6 caracteres' : '';
+    // Validar longitud mínima
+    this.hasMinLength = this.contrasena.length >= 8;
+    
+    // Validar mayúscula
+    this.hasUpperCase = /[A-Z]/.test(this.contrasena);
+    
+    // Validar carácter especial
+    this.hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(this.contrasena);
+
+    // Mensaje de error
+    if (!this.hasMinLength) {
+      this.contrasenaError = 'La contraseña debe tener al menos 8 caracteres';
+    } else if (!this.hasUpperCase) {
+      this.contrasenaError = 'Debe incluir al menos una letra mayúscula';
+    } else if (!this.hasSpecialChar) {
+      this.contrasenaError = 'Debe incluir al menos un carácter especial';
+    } else {
+      this.contrasenaError = '';
+    }
+
     this.validateConfirmar(); // validar también coincidencia
   }
 
@@ -66,6 +102,11 @@ export class Register {
       this.contrasena && this.confirmarContrasena && this.contrasena !== this.confirmarContrasena
         ? 'Las contraseñas no coinciden'
         : '';
+  }
+
+  // ✅ Verificar si la contraseña es válida
+  isPasswordValid(): boolean {
+    return this.hasMinLength && this.hasUpperCase && this.hasSpecialChar;
   }
 
   // 🔹 Registro final
@@ -85,7 +126,8 @@ export class Register {
       this.correoError ||
       this.telefonoError ||
       this.contrasenaError ||
-      this.confirmarError
+      this.confirmarError ||
+      !this.isPasswordValid()
     ) {
       this.errorMessage = 'Por favor corrige los errores antes de continuar.';
       return;
@@ -102,13 +144,13 @@ export class Register {
       })
       .subscribe({
         next: (response) => {
-          console.log('✅ Registro exitoso:', response);
+          console.log('Registro exitoso:', response);
           this.isLoading = false;
           localStorage.setItem('pendingEmail', this.correoElectronico);
           this.router.navigate(['/auth/verify-email']);
         },
         error: (error) => {
-          console.error('❌ Error en registro:', error);
+          console.error('Error en registro:', error);
           this.isLoading = false;
 
           if (error.error?.message) {

@@ -1,0 +1,65 @@
+<div class="verify-container">
+  <div class="verify-card">
+    <div class="logo-section">
+      <div class="logo-icon">
+        <ion-icon name="shield-checkmark"></ion-icon>
+      </div>
+      <h2>Verificar Código</h2>
+      <p>Ingresa el código de 6 dígitos que enviamos a tu correo</p>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div *ngIf="errorMessage" class="error-message">
+      <ion-icon name="alert-circle-outline"></ion-icon>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Mensaje de éxito -->
+    <div *ngIf="successMessage" class="success-message">
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      {{ successMessage }}
+    </div>
+
+    <form (ngSubmit)="onSubmit()" class="verify-form" #verifyForm="ngForm">
+      <!-- Código -->
+      <div class="form-group">
+        <label for="code">Código de Verificación</label>
+        <div class="input-with-icon">
+          <ion-icon name="key-outline"></ion-icon>
+          <input type="text" id="code" [(ngModel)]="code" name="code" 
+            placeholder="000000" [disabled]="isLoading" required 
+            maxlength="6" (ngModelChange)="validateCode()" 
+            pattern="[0-9]{6}" />
+        </div>
+        <p class="field-error" *ngIf="codeError">{{ codeError }}</p>
+      </div>
+
+      <!-- Botón -->
+      <button type="submit" class="btn-primary btn-full" 
+        [disabled]="isLoading || !verifyForm.form.valid || codeError">
+        <ion-icon *ngIf="!isLoading" name="checkmark-outline"></ion-icon>
+        <ion-icon *ngIf="isLoading" name="hourglass-outline" class="spinner"></ion-icon>
+        {{ isLoading ? 'Verificando...' : 'Verificar Código' }}
+      </button>
+    </form>
+
+    <!-- Reenviar código -->
+    <div class="resend-section">
+      <p>¿No recibiste el código?</p>
+      <button type="button" class="btn-link" (click)="resendCode()" 
+        [disabled]="isResending || countdown > 0">
+        <ion-icon name="reload-outline"></ion-icon>
+        {{ countdown > 0 ? `Reenviar en ${countdown}s` : 'Reenviar código' }}
+      </button>
+    </div>
+
+    <div class="back-link">
+      <p>
+        <span (click)="goToLogin()" class="link-accent">
+          <ion-icon name="arrow-back-outline"></ion-icon>
+          Volver al inicio de sesión
+        </span>
+      </p>
+    </div>
+  </div>
+</div>

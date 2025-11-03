@@ -1,18 +1,18 @@
 <div class="registro-container">
   <div class="registro-card">
     <div class="logo-section">
+     
       <h2>Crear cuenta</h2>
       <p>Únete a nuestra plataforma</p>
     </div>
 
-    <!-- Mensaje de error -->
-    <div *ngIf="errorMessage" class="alert alert-error">
+    <div *ngIf="errorMessage" class="error-message">
       <ion-icon name="alert-circle-outline"></ion-icon>
       {{ errorMessage }}
     </div>
 
-    <!-- Mensaje de éxito -->
-    <div *ngIf="successMessage" class="alert alert-success">
+    
+    <div *ngIf="successMessage" class="success-message">
       <ion-icon name="checkmark-circle-outline"></ion-icon>
       {{ successMessage }}
     </div>
@@ -56,10 +56,29 @@
         <label for="contrasena">Contraseña</label>
         <div class="input-with-icon">
           <ion-icon name="lock-closed-outline"></ion-icon>
-          <input type="password" id="contrasena" [(ngModel)]="contrasena" name="contrasena" placeholder="••••••••"
-            [disabled]="isLoading" required (ngModelChange)="validateContrasena()" />
+          <input [type]="showPassword ? 'text' : 'password'" id="contrasena" [(ngModel)]="contrasena" 
+            name="contrasena" placeholder="••••••••" [disabled]="isLoading" required 
+            (ngModelChange)="validateContrasena()" />
+          <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'" 
+            class="toggle-password" (click)="togglePasswordVisibility()"></ion-icon>
         </div>
         <p class="field-error" *ngIf="contrasenaError">{{ contrasenaError }}</p>
+        
+        <!-- Indicadores de fortaleza -->
+        <div class="password-strength" *ngIf="contrasena">
+          <div class="strength-indicator" [class.valid]="hasMinLength">
+            <ion-icon [name]="hasMinLength ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+            <span>Mínimo 8 caracteres</span>
+          </div>
+          <div class="strength-indicator" [class.valid]="hasUpperCase">
+            <ion-icon [name]="hasUpperCase ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+            <span>Una letra mayúscula</span>
+          </div>
+          <div class="strength-indicator" [class.valid]="hasSpecialChar">
+            <ion-icon [name]="hasSpecialChar ? 'checkmark-circle' : 'ellipse-outline'"></ion-icon>
+            <span>Un carácter especial (!@#$%^&*)</span>
+          </div>
+        </div>
       </div>
 
       <!-- Confirmar Contraseña -->
@@ -67,22 +86,25 @@
         <label for="confirmarContrasena">Confirmar Contraseña</label>
         <div class="input-with-icon">
           <ion-icon name="lock-closed-outline"></ion-icon>
-          <input type="password" id="confirmarContrasena" [(ngModel)]="confirmarContrasena" name="confirmarContrasena"
-            placeholder="••••••••" [disabled]="isLoading" required (ngModelChange)="validateConfirmar()" />
+          <input [type]="showConfirmPassword ? 'text' : 'password'" id="confirmarContrasena" 
+            [(ngModel)]="confirmarContrasena" name="confirmarContrasena" placeholder="••••••••" 
+            [disabled]="isLoading" required (ngModelChange)="validateConfirmar()" />
+          <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'" 
+            class="toggle-password" (click)="toggleConfirmPasswordVisibility()"></ion-icon>
         </div>
         <p class="field-error" *ngIf="confirmarError">{{ confirmarError }}</p>
       </div>
 
       <!-- Botón -->
-      <button type="submit" class="btn-primary btn-full" [disabled]="isLoading || !registroForm.form.valid">
+      <button type="submit" class="btn-primary btn-full" 
+        [disabled]="isLoading || !registroForm.form.valid || !isPasswordValid()">
         <ion-icon *ngIf="!isLoading" name="person-add-outline"></ion-icon>
         <ion-icon *ngIf="isLoading" name="hourglass-outline" class="spinner"></ion-icon>
         {{ isLoading ? 'Registrando...' : 'Crear Cuenta' }}
       </button>
     </form>
 
-
-    <div class="login-link">
+    <div class="register-link">
       <p>¿Ya tienes cuenta?
         <span (click)="goToLogin()" class="link-accent">Inicia sesión aquí</span>
       </p>

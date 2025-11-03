@@ -1,31 +1,29 @@
 <div class="verify-container">
   <div class="verify-card">
-    <!-- Icono principal -->
-    <div class="icon-section">
-      <div class="email-icon">
-        <ion-icon name="mail-open-outline"></ion-icon>
+    <!-- Logo e icono principal -->
+    <div class="logo-section">
+      <div class="logo-icon">
+        <ion-icon name="mail-open"></ion-icon>
       </div>
-    </div>
-
-    <!-- Título y descripción -->
-    <div class="header-section">
       <h2>Verifica tu correo</h2>
       <p class="description">
         Hemos enviado un código de verificación de 6 dígitos a:
       </p>
       <p class="email-highlight">{{ email }}</p>
       <p class="info-text">
+        <ion-icon name="time-outline"></ion-icon>
         El código expira en 4 minutos
       </p>
     </div>
 
-    <!-- Mensajes -->
-    <div *ngIf="errorMessage" class="alert alert-error">
+    <!-- Mensaje de error -->
+    <div *ngIf="errorMessage" class="error-message">
       <ion-icon name="alert-circle-outline"></ion-icon>
       {{ errorMessage }}
     </div>
 
-    <div *ngIf="successMessage" class="alert alert-success">
+    <!-- Mensaje de éxito -->
+    <div *ngIf="successMessage" class="success-message">
       <ion-icon name="checkmark-circle-outline"></ion-icon>
       {{ successMessage }}
     </div>
@@ -34,18 +32,20 @@
     <form (ngSubmit)="onVerifyEmail()" class="verify-form">
       <div class="form-group">
         <label for="verificationCode">Código de Verificación</label>
-        <input 
-          type="text" 
-          id="verificationCode" 
-          [(ngModel)]="verificationCode"
-          (input)="onCodeInput($event)"
-          name="verificationCode" 
-          placeholder="000000"
-          maxlength="6"
-          [disabled]="isVerifying"
-          class="verification-input"
-          autocomplete="off"
-          required>
+        <div class="input-with-icon">
+          <ion-icon name="key-outline"></ion-icon>
+          <input 
+            type="text" 
+            id="verificationCode" 
+            [(ngModel)]="verificationCode"
+            (input)="onCodeInput($event)"
+            name="verificationCode" 
+            placeholder="000000"
+            maxlength="6"
+            [disabled]="isVerifying"
+            autocomplete="off"
+            required>
+        </div>
       </div>
 
       <button 
@@ -76,14 +76,14 @@
     </div>
 
     <!-- Enlaces adicionales -->
-    <div class="links-section">
+    <div class="back-link">
       <p>
-        <span (click)="goToLogin()" class="link-secondary">
+        <span (click)="goToLogin()" class="link-accent">
           <ion-icon name="arrow-back-outline"></ion-icon>
           Volver al inicio de sesión
         </span>
       </p>
-      <p>
+      <p class="secondary-link">
         <span (click)="goToRegister()" class="link-secondary">
           ¿Correo incorrecto? Registrarse de nuevo
         </span>
