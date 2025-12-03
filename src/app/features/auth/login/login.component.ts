@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
-import { SocialAuthService, GoogleSigninButtonModule, GoogleLoginProvider } from '@abacritt/angularx-social-login';
 import { Subject, takeUntil } from 'rxjs';
+
+declare const google: any;
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, GoogleSigninButtonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -19,33 +20,63 @@ export class Login implements OnInit, OnDestroy {
   password: string = '';
   errorMessage: string = '';
   isLoading: boolean = false;
+  isBlocked: boolean = false;
+  remainingTime: number = 0;
   private destroy$ = new Subject<void>();
+  private countdownInterval: any;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private socialAuthService: SocialAuthService
   ) {}
 
   ngOnInit(): void {
-    // Escuchar cambios en el estado de autenticación de Google
-    this.socialAuthService.authState
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((user) => {
-        if (user && user.idToken) {
-          this.handleGoogleLogin(user.idToken);
-        }
-      });
+    this.initializeGoogleSignIn();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+  }
+
+  initializeGoogleSignIn(): void {
+    if (typeof google !== 'undefined') {
+      google.accounts.id.initialize({
+        client_id: '96794615283-7rirdmj84i343p903gmilur3lklnf6kq.apps.googleusercontent.com',
+        callback: (response: any) => this.handleGoogleCallback(response),
+      });
+
+      google.accounts.id.renderButton(
+        document.querySelector('.google-button-wrapper'),
+        {
+          type: 'standard',
+          size: 'large',
+          text: 'signin_with',
+          shape: 'rectangular',
+          theme: 'outline',
+          logo_alignment: 'left',
+        }
+      );
+    }
+  }
+
+  handleGoogleCallback(response: any): void {
+    if (response.credential) {
+      this.handleGoogleLogin(response.credential);
+    }
   }
 
   onLogin(): void {
     this.errorMessage = '';
+
+    // Si está bloqueado, no permitir login
+    if (this.isBlocked) {
+      return;
+    }
 
     // Validar campos
     if (!this.email || !this.password) {
@@ -67,13 +98,18 @@ export class Login implements OnInit, OnDestroy {
       next: (response) => {
         console.log('Login exitoso:', response);
         this.isLoading = false;
+        this.isBlocked = false;
+        this.remainingTime = 0;
         this.router.navigate(['/dashboard']);
       },
       error: (error) => {
         console.log('Error en login:', error);
         this.isLoading = false;
 
-        if (error.error?.message) {
+        // Manejar bloqueo por demasiados intentos
+        if (error.status === 429) {
+          this.handleBlockedAccount(error.error?.message);
+        } else if (error.error?.message) {
           this.errorMessage = error.error.message;
         } else if (error.status === 401) {
           this.errorMessage = 'Credenciales incorrectas';
@@ -85,6 +121,37 @@ export class Login implements OnInit, OnDestroy {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  handleBlockedAccount(message: string): void {
+    // Extraer el tiempo restante del mensaje
+    const timeMatch = message.match(/(\d+)\s+segundos/);
+    if (timeMatch) {
+      this.remainingTime = parseInt(timeMatch[1]);
+      this.isBlocked = true;
+      this.startCountdown();
+    }
+    this.errorMessage = message;
+  }
+
+  startCountdown(): void {
+    if (this.countdownInterval) {
+      clearInterval(this.countdownInterval);
+    }
+
+    this.countdownInterval = setInterval(() => {
+      this.remainingTime--;
+      
+      if (this.remainingTime <= 0) {
+        this.isBlocked = false;
+        this.errorMessage = '';
+        clearInterval(this.countdownInterval);
+      } else {
+        this.errorMessage = `Demasiados intentos fallidos. Intenta de nuevo en ${this.remainingTime} segundos`;
+      }
+      
+      this.cdr.detectChanges();
+    }, 1000);
   }
 
   handleGoogleLogin(googleToken: string): void {
@@ -106,19 +173,6 @@ export class Login implements OnInit, OnDestroy {
           console.error('Error en Google login:', error);
           this.cdr.detectChanges();
         },
-      });
-  }
-
-  signInWithGoogle(): void {
-    this.socialAuthService
-      .signIn(GoogleLoginProvider.PROVIDER_ID)
-      .then(() => {
-        console.log('Autenticación con Google iniciada');
-      })
-      .catch((error) => {
-        console.error('Error al iniciar sesión con Google:', error);
-        this.errorMessage = 'Error al conectar con Google';
-        this.cdr.detectChanges();
       });
   }
 
